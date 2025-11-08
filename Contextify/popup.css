@@ -1,0 +1,88 @@
+/* === Clarify / Contextify popup styling === */
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --radius: 12px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  width: 340px;
+  margin: 0;
+  padding: 12px;
+  font-family: system-ui, sans-serif;
+  background-color: var(--bg);
+  color: #111827;
+}
+
+h1 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+#history {
+  margin-top: 10px;
+}
+
+.entry-card {
+  background-color: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.entry-text {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.entry-explanation {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+button {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+button:hover {
+  background-color: #1e40af;
+}
+
+/* Header & branding */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.powered {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: -4px;
+}
