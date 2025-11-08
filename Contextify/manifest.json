@@ -1,27 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "Contextify ",
-  "description": "Highlights text and explains using Gemini.",
-  "version": "3.0",
-
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "storage"
-  ],
-
-  "host_permissions": [
-    "https://generativelanguage.googleapis.com/*"
-  ],
-
+  "name": "Contextify",
+  "version": "1.0",
+  "description": "Highlight text to get AI explanations, summaries, and translations.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "icons": {
+  "16": "icons/contextify_logo16.png",
+  "48": "icons/contextify_logo48.png",
+  "128": "icons/contextify_logo128.png"
+},
+"action": {
+  "default_popup": "popup.html",
+  "default_icon": {
+    "16": "icons/contextify_logo16.png",
+    "48": "icons/contextify_logo48.png",
+    "128": "icons/contextify_logo128.png"
+  }
+},
   "background": {
     "service_worker": "background.js"
   },
-
-  "action": {
-    "default_popup": "popup.html"
-  },
-
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
