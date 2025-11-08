@@ -6,16 +6,16 @@
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": ["<all_urls>"],
   "icons": {
-  "16": "icons/contextify_logo16.png",
-  "48": "icons/contextify_logo48.png",
-  "128": "icons/contextify_logo128.png"
+  "16": "icons/icontextifylogo16.png",
+  "48": "icons/icontextifylogo48.png",
+  "128": "icons/icontextifylogo128.png"
 },
 "action": {
   "default_popup": "popup.html",
   "default_icon": {
-    "16": "icons/contextify_logo16.png",
-    "48": "icons/contextify_logo48.png",
-    "128": "icons/contextify_logo128.png"
+  "16": "icons/icontextifylogo16.png",
+  "48": "icons/icontextifylogo48.png",
+  "128": "icons/icontextifylogo128.png"
   }
 },
   "background": {
