@@ -28,6 +28,33 @@ h2 {
   margin: 8px 0 0 0;
 }
 
+h3 {
+  text-align: center;
+  margin: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  position: relative;
+}
+
+h3::before,
+h3::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 1px;
+  background: #ddd;
+}
+
+h3::before {
+  left: 0;
+}
+
+h3::after {
+  right: 0;
+}
+
 p {
   text-align: center;
   margin: 0;
