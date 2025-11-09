@@ -3,28 +3,37 @@
   "name": "Contextify",
   "version": "1.0",
   "description": "Highlight text to get AI explanations, summaries, and translations.",
-  "permissions": ["storage", "activeTab", "scripting"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": ["activeTab", "scripting", "storage", "commands"],
+  "host_permissions": [
+    "<all_urls>",
+    "https://generativelanguage.googleapis.com/*"
+  ],
   "icons": {
-  "16": "icons/icontextifylogo16.png",
-  "48": "icons/icontextifylogo48.png",
-  "128": "icons/icontextifylogo128.png"
-},
-"action": {
-  "default_popup": "popup.html",
-  "default_icon": {
-  "16": "icons/icontextifylogo16.png",
-  "48": "icons/icontextifylogo48.png",
-  "128": "icons/icontextifylogo128.png"
-  }
-},
+    "16": "icons/icontextifylogo16.png",
+    "48": "icons/icontextifylogo48.png",
+    "128": "icons/icontextifylogo128.png"
+  },
   "background": {
     "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icontextifylogo16.png",
+      "48": "icons/icontextifylogo48.png",
+      "128": "icons/icontextifylogo128.png"
+    }
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "commands": {
+    "trigger_contextify": {
+      "suggested_key": { "default": "Ctrl+Shift+U" },
+      "description": "Trigger Contextify on selected text"
+    }
+  }
 }
