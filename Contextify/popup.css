@@ -22,25 +22,43 @@ body.dark {
 body {
   width: 260px;
   font-family: "Segoe UI", sans-serif;
-  background-color: var(--bg-color);
+  background-color: transparent;
   color: var(--text-color);
   margin: 0;
   padding: 10px;
   transition: background-color 0.3s ease, color 0.3s ease;
-  border-radius: 18px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 26px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  animation: popupFadeIn 0.25s ease;
+}
+
+html {
+  background-color: transparent;
+}
+
+.popup-container {
+  background-color: var(--bg-color);
+  border-radius: 24px;
+  padding: 12px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+@keyframes popupFadeIn {
+  from { transform: scale(0.97); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .top-bar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   margin-bottom: 4px;
   margin-top: -2px;
 }
 
-#themeToggle {
+#themeToggle, #readButton {
   background-color: var(--card-bg);
   color: var(--text-color);
   border: 1px solid #ccc;
@@ -56,7 +74,7 @@ body {
   justify-content: center;
 }
 
-#themeToggle:hover {
+#themeToggle:hover, #readButton:hover {
   background-color: var(--button-bg);
   color: #fff;
   transform: scale(1.05);
@@ -76,6 +94,24 @@ body {
   height: 56px;
   border-radius: 14px;
   margin-bottom: 6px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.logo-centered:hover {
+  transform: scale(1.08);
+}
+
+@keyframes bounce {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.2) rotate(-5deg); }
+  50% { transform: scale(1.15) rotate(5deg); }
+  75% { transform: scale(1.2) rotate(-3deg); }
+  100% { transform: scale(1); }
+}
+
+.logo-bounce {
+  animation: bounce 0.6s ease;
 }
 
 h2 {
@@ -90,15 +126,40 @@ h2 {
 }
 
 h3 {
+  position: relative;
   font-size: 13px;
   font-weight: 600;
-  margin: 8px 0 6px;
+  margin: 12px 0 6px;
   text-align: center;
+  color: var(--text-color);
+}
+
+h3::before,
+h3::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 28%;
+  height: 0.8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+h3::before {
+  left: 0;
+}
+
+h3::after {
+  right: 0;
+}
+
+body.dark h3::before,
+body.dark h3::after {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .history-card {
   background: var(--card-bg);
-  border-radius: 12px;
+  border-radius: 18px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   margin-top: 6px;
   padding: 6px 8px;
@@ -120,7 +181,7 @@ button {
   color: white;
   border: none;
   padding: 6px 10px;
-  border-radius: 10px;
+  border-radius: 14px;
   width: 100%;
   margin-top: 8px;
   cursor: pointer;
@@ -138,4 +199,88 @@ button:hover {
   color: #777;
   margin-top: 8px;
   text-align: center;
+}
+
+.flying-letter {
+  position: fixed;
+  font-weight: bold;
+  font-size: 14px;
+  color: #da7924;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 1.2s ease-out, opacity 0.8s ease-in;
+  z-index: 9999;
+  user-select: none;
+}
+
+body.dark .flying-letter {
+  color: #ffffff;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 0px rgba(37, 99, 235, 0.4), 0 0 0px rgba(37, 99, 235, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.7), 0 0 40px rgba(37, 99, 235, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(37, 99, 235, 0.3), 0 0 0px rgba(37, 99, 235, 0.2);
+  }
+}
+
+.logo-speaking {
+  animation: glowPulse 1.2s infinite ease-in-out;
+  border-radius: 50%;
+}
+
+body.dark .logo-speaking {
+  animation: glowPulseDark 1.2s infinite ease-in-out;
+}
+
+@keyframes glowPulseDark {
+  0% {
+    box-shadow: 0 0 0px rgba(96, 165, 250, 0.3), 0 0 0px rgba(96, 165, 250, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(147, 197, 253, 0.9), 0 0 50px rgba(147, 197, 253, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(96, 165, 250, 0.3), 0 0 0px rgba(96, 165, 250, 0.2);
+  }
+}
+
+@keyframes gradientGlow {
+  0% { box-shadow: 0 0 20px #2563eb; }
+  25% { box-shadow: 0 0 25px #7c3aed; }
+  50% { box-shadow: 0 0 25px #22d3ee; }
+  75% { box-shadow: 0 0 25px #10b981; }
+  100% { box-shadow: 0 0 20px #2563eb; }
+}
+.logo-speaking {
+  animation: gradientGlow 2.5s infinite alternate ease-in-out;
+  border-radius: 50%;
+}
+
+.quick-actions {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.mini-btn {
+  background: var(--button-bg);
+  border: none;
+  color: #fff;
+  padding: 4px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mini-btn:hover {
+  background: var(--button-hover);
+  transform: scale(1.1);
 }
