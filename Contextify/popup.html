@@ -8,18 +8,26 @@
   <link rel="stylesheet" href="popup.css" />
 </head>
 
-<body>
+<body style="background: transparent;">
   <div class="popup-container">
-    <!-- Toggle -->
+    <!-- Top bar -->
     <div class="top-bar">
+      <button id="readButton" title="Read aloud">🔊</button>
       <button id="themeToggle" title="Toggle theme">🌙</button>
     </div>
 
     <!-- Logo center -->
     <div class="brand-section">
-      <img src="icons/icontextifylogo48.png" alt="logo" class="logo-centered">
+      <img src="icons/icontextifylogo48.png" alt="logo" class="logo-centered" id="logo">
       <h2>Contextify</h2>
       <p class="powered">Powered by Gemini</p>
+
+      <!-- ⚡ Quick actions -->
+      <div class="quick-actions">
+        <button class="mini-btn">💡 Summarize</button>
+        <button class="mini-btn">🧠 Explain</button>
+        <button class="mini-btn">🌍 Translate</button>
+      </div>
     </div>
 
     <!-- History -->
