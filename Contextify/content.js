@@ -1,162 +1,157 @@
-// == Content Script for Chrome Extension ==
-// This script injects a floating "?" button on text selection.
-// On clicking the button, it sends selected text to the background script to get an explanation,
-// then displays the explanation in a styled tooltip near the selection.
-// Each step is clearly commented.
+console.log("[Contextify] Content script loaded");
 
-// ===================
-// STEP 1: Listen for text selection events
-// When the user releases mouse (mouseup), check if text is selected
-// ===================
-document.addEventListener("mouseup", (event) => {
-    // Get the current selection object
-    const selection = window.getSelection();
-    const selectedText = selection.toString().trim(); // Only use non-whitespace text
+let quickBtn = null;
+let boxOverlay = null;
 
-    // Log selected text (Checkpoint 1)
-    console.log("Selected Text:", selectedText);
+function showQuickButton(selectionText, range) {
+  removeQuickButton();
 
-    // Show or hide the quick-action button based on selection (Task 2)
-    showOrHideQuickButton(selectedText, selection, event);
-});
+  const rect = range.getBoundingClientRect();
+  const middleX = rect.left + rect.width / 2;
+  const bottomY = rect.bottom + 6;
 
-// ===========================
-// Helper: Show or hide the floating "?" button depending on text selection
-// ===========================
-function showOrHideQuickButton(selectedText, selection, mouseEvent) {
-    // Remove any existing button if present (prevents multiple buttons)
+  quickBtn = document.createElement("button");
+  quickBtn.textContent = "?";
+  Object.assign(quickBtn.style, {
+    position: "fixed",
+    top: `${Math.min(bottomY, window.innerHeight - 40)}px`,
+    left: `${Math.min(middleX - 16, window.innerWidth - 40)}px`,
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%",
+    background: "#FFA500",
+    color: "#fff",
+    border: "none",
+    cursor: "pointer",
+    zIndex: 99999,
+    fontSize: "20px",
+    fontWeight: "bold",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+    transition: "transform 0.2s, background 0.2s"
+  });
+
+  quickBtn.addEventListener("mouseenter", () => {
+    quickBtn.style.background = "#ff8c00";
+    quickBtn.style.transform = "scale(1.1)";
+  });
+  quickBtn.addEventListener("mouseleave", () => {
+    quickBtn.style.background = "#FFA500";
+    quickBtn.style.transform = "scale(1)";
+  });
+
+  quickBtn.addEventListener("click", () => {
+    console.log("[Contextify] Button clicked");
+    handleTrigger(selectionText);
     removeQuickButton();
+  });
 
-    // Only show button if there is non-empty text selected
-    if (selectedText.length > 0) {
-        // Calculate anchor for button position (Task 3)
-        // Attempt to position near the bounding rectangle of selection
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-
-        // Create floating button
-        const quickBtn = document.createElement("button");
-        quickBtn.textContent = "?"; // Task 2: Small round "?" button
-        quickBtn.id = "explain-quick-btn";
-
-        // Style for round, small button (Task 2)
-        Object.assign(quickBtn.style, {
-            position: "fixed",
-            top: `${Math.min(rect.bottom + 6, window.innerHeight - 48)}px`, // Don't float off-screen
-            left: `${Math.min(rect.right + 6, window.innerWidth - 48)}px`,
-            zIndex: 99999,
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            background: "#4078c0",
-            color: "#fff",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-            border: "none",
-            cursor: "pointer",
-            fontWeight: "bold",
-            fontSize: "20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-        });
-
-        // Only show while selection persists
-        document.body.appendChild(quickBtn);
-
-        // When button is clicked: send selected text to background (Task 4)
-        quickBtn.addEventListener("click", () => {
-            // Send message to background with the selected text
-            chrome.runtime.sendMessage({ type: "EXPLAIN", text: selectedText });
-
-            // Build the tooltip with placeholder text (Task 5)
-            injectTooltip(rect);
-
-            // Remove button (not needed while tooltip shown)
-            removeQuickButton();
-        });
-    }
+  document.body.appendChild(quickBtn);
 }
 
-// ====================
-// Helper: Remove the quick-action "?" button if it exists
-// ====================
 function removeQuickButton() {
-    const existing = document.getElementById("explain-quick-btn");
-    if (existing) existing.remove();
+  if (quickBtn) {
+    quickBtn.remove();
+    quickBtn = null;
+  }
 }
 
-// ========================
-// STEP 5: Build explanation tooltip with styles and dummy text
-// ========================
-function injectTooltip(selectionRect) {
-    // Remove old tooltip if any
-    removeTooltip();
-
-    // Create new tooltip element
-    const tooltip = document.createElement("div");
-    tooltip.id = "explanation-tooltip";
-    tooltip.textContent = "Loading explanation..."; // Dummy text (Task 5 checkpoint)
-
-    // Style: floating card, rounded corners, shadow, fade-in (Task 5)
-    Object.assign(tooltip.style, {
-        position: "fixed",
-        top: `${Math.min(selectionRect.bottom + 10, window.innerHeight - 120)}px`,
-        left: `${Math.min(selectionRect.left, window.innerWidth - 320)}px`,
-        maxWidth: "300px",
-        padding: "16px",
-        background: "#fff",
-        color: "#222",
-        borderRadius: "10px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.18)",
-        zIndex: 99999,
-        opacity: 0,
-        transition: "opacity 0.3s",
-        fontSize: "16px",
-        pointerEvents: "auto",
-        fontFamily: "sans-serif"
+function showBox(text) {
+  if (!boxOverlay) {
+    boxOverlay = document.createElement("div");
+    Object.assign(boxOverlay.style, {
+      position: "fixed",
+      top: "20px",
+      right: "20px",
+      width: "320px",
+      maxHeight: "420px",
+      overflowY: "auto",
+      background: "#fff",
+      border: "1px solid #ddd",
+      borderRadius: "14px",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+      padding: "14px 16px 16px",
+      zIndex: 999999,
+      fontFamily: "Segoe UI, sans-serif",
+      fontSize: "14px",
+      lineHeight: "1.4",
+      whiteSpace: "pre-wrap",
+      color: "#333",
+      opacity: "0",
+      transition: "opacity 0.25s ease"
     });
 
-    document.body.appendChild(tooltip);
-    // Trigger fade-in animation
-    setTimeout(() => { tooltip.style.opacity = "1"; }, 50);
+    // Close button
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "✖";
+    Object.assign(closeBtn.style, {
+      position: "absolute",
+      top: "6px",
+      right: "8px",
+      border: "none",
+      background: "transparent",
+      color: "#FFA500",
+      fontSize: "18px",
+      cursor: "pointer",
+      transition: "color 0.2s"
+    });
+
+    closeBtn.addEventListener("mouseenter", () => (closeBtn.style.color = "#ff8c00"));
+    closeBtn.addEventListener("mouseleave", () => (closeBtn.style.color = "#FFA500"));
+    closeBtn.addEventListener("click", () => {
+      boxOverlay.remove();
+      boxOverlay = null;
+    });
+
+    boxOverlay.appendChild(closeBtn);
+    document.body.appendChild(boxOverlay);
+    requestAnimationFrame(() => (boxOverlay.style.opacity = "1"));
+  }
+
+  // Remove previous content but keep close button
+  boxOverlay.childNodes.forEach(node => {
+    if (node.tagName !== "BUTTON") node.remove();
+  });
+  const content = document.createElement("div");
+  content.textContent = text;
+  content.style.marginTop = "8px";
+  boxOverlay.appendChild(content);
 }
 
-// ====================
-// Helper: Remove existing tooltip
-// ====================
-function removeTooltip() {
-    const tip = document.getElementById("explanation-tooltip");
-    if (tip) tip.remove();
-}
+function handleTrigger(selectedText) {
+  const text = selectedText?.trim();
+  if (!text) {
+    console.warn("[Contextify] No text selected");
+    return;
+  }
 
-// =======================
-// STEP 6: Listen for the explanation from background and update tooltip
-// =======================
-// The background script will send a message with Gemini's explanation.
-// Example: chrome.runtime.sendMessage({ type: 'EXPLAIN_RESULT', text: explanation });
-
-chrome.runtime.onMessage.addEventListener("message", (msg) => {
-    // Only handle explanation result messages
-    if (msg.type === "EXPLAIN_RESULT") {
-        const tooltip = document.getElementById("explanation-tooltip");
-        if (tooltip) {
-            tooltip.textContent = msg.text; // Fill in Gemini's output
-        }
+  showBox("Thinking...");
+  chrome.runtime.sendMessage({ type: "EXPLAIN", text }, () => {
+    if (chrome.runtime.lastError) {
+      showBox("Thinking..");
     }
+  });
+}
+
+document.addEventListener("mouseup", () => {
+  const sel = window.getSelection();
+  const text = sel.toString().trim();
+  if (text.length > 0) {
+    const range = sel.getRangeAt(0);
+    showQuickButton(text, range);
+  } else {
+    removeQuickButton();
+  }
 });
 
-// ===========================
-// Optional: Remove button/tooltip on outside click (cleanup)
-// ===========================
-document.addEventListener("mousedown", (event) => {
-    // If user clicks outside a selection/button, remove floating elements
-    const quickBtn = document.getElementById("explain-quick-btn");
-    const tooltip = document.getElementById("explanation-tooltip");
-    if (
-        quickBtn && !quickBtn.contains(event.target) ||
-        tooltip && !tooltip.contains(event.target)
-    ) {
-        removeQuickButton();
-        removeTooltip();
-    }
+chrome.runtime.onMessage.addListener(msg => {
+  if (msg.type === "EXPLAIN_RESULT") showBox(msg.text);
+  if (msg.type === "TRIGGER_CONTEXTIFY") {
+    const selectedText = window.getSelection().toString().trim();
+    console.log("[Contextify] Command triggered");
+    handleTrigger(selectedText);
+    removeQuickButton();
+  }
 });
