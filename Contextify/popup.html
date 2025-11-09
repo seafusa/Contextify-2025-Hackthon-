@@ -3,16 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
   <title>Contextify</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 
 <body>
   <div class="popup-container">
-    <img src="icons/icontextifylogo48.png" alt="logo" class="logo">
-    <h2>Contextify</h2>
-    <p>Powered by Gemini</p>
+    <!-- Toggle -->
+    <div class="top-bar">
+      <button id="themeToggle" title="Toggle theme">🌙</button>
+    </div>
 
+    <!-- Logo center -->
+    <div class="brand-section">
+      <img src="icons/icontextifylogo48.png" alt="logo" class="logo-centered">
+      <h2>Contextify</h2>
+      <p class="powered">Powered by Gemini</p>
+    </div>
+
+    <!-- History -->
     <h3>History</h3>
     <div id="history"></div>
 
